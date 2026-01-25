@@ -171,7 +171,7 @@ LOGIC SPEC: SUPPLEMENTAL ESSAYS (Analyze & Execute)
 TASK:
 1. Analyze the user's prompt to classify it into one of the 8 types below.
 2. Use the 'Perfect answer logic' for that specific type.
-3. SEARCH THE INTERNET for the specific University to find real labs, professors, values, or traditions.
+3. USE YOUR INTERNAL KNOWLEDGE BASE to find real labs, professors, values, or traditions for the specific University.
 4. Integrate the Student Record + Generated Personal Statement to ensure consistency.
 
 TYPES & LOGIC:
@@ -260,8 +260,8 @@ def extract_text_from_pdf(file):
         st.error(f"Error reading PDF: {e}")
         return None
 
-def call_gemini(system_prompt, user_content, temperature=0.7, tools=None):
-    """Wrapper for Gemini generation with optional Tools."""
+def call_gemini(system_prompt, user_content, temperature=0.7):
+    """Wrapper for Gemini generation."""
     full_prompt = f"{system_prompt}\n\nINPUT DATA:\n{user_content}"
     
     try:
@@ -270,8 +270,7 @@ def call_gemini(system_prompt, user_content, temperature=0.7, tools=None):
         
         response = model.generate_content(
             contents=[{"role": "user", "parts": [full_prompt]}],
-            generation_config=GenerationConfig(temperature=temperature, max_output_tokens=4000),
-            tools=tools
+            generation_config=GenerationConfig(temperature=temperature, max_output_tokens=4000)
         )
         return response.text
     except Exception as e:
@@ -514,14 +513,11 @@ def main():
                     WORD LIMIT: {word_limit}
                     """
                     
-                    # Generate with Search Tool Enabled
-                    # Using the google_search key as per API requirement
-                    search_tools = [{'google_search': {}}]
-                    
+                    # Call Gemini WITHOUT explicit search tool parameters to avoid crashes.
+                    # The prompt now instructs the model to use its own knowledge.
                     supp_result = call_gemini(
                         system_prompt=SUPPLEMENTAL_LOGIC_SPEC, 
-                        user_content=context_data,
-                        tools=search_tools
+                        user_content=context_data
                     )
                     
                     # Save result

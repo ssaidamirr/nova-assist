@@ -515,8 +515,8 @@ def main():
                     """
                     
                     # Generate with Search Tool Enabled
-                    # Using the standard tools dictionary structure for Google Search
-                    search_tools = [{'google_search': {}}]
+                    # Using the google_search_retrieval key which maps directly to the Tool proto
+                    search_tools = [{'google_search_retrieval': {}}]
                     
                     supp_result = call_gemini(
                         system_prompt=SUPPLEMENTAL_LOGIC_SPEC, 
